@@ -11,9 +11,11 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useGetBooks } from "./api/useApi";
 import toast from "react-hot-toast";
 import DeleteBookAlertDialog from "./component/dialogs/DeleteBookAlertDialog";
+import EditBookDialog from "./component/dialogs/EditBookDialog";
 function App() {
   const [openAddModal, setOpenAddModal] = useState(false);
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
+  const [openEditModal, setOpenEditModal] = useState(false);
   const [modalDeleteContent, setDeleteContent] = useState(null);
   const [bookId, setBookId] = useState(null);
   const queryClient = useQueryClient();
@@ -29,6 +31,7 @@ function App() {
       <span className="text-rose-600 text-base text-bold"> {bookTitle}</span>
     </>
   );
+
   const onError = (err) => {
     console.log(err.message);
     toast.error(err.message);
@@ -75,7 +78,14 @@ function App() {
                 <TableCell>{book.bookAuthor}</TableCell>
                 <TableCell>{book.bookPublishYear}</TableCell>
                 <TableCell className="text-right flex gap-2 sm:flex flex-col">
-                  <Button className={"flex flex-row-reverse gap-2 "}>
+                  <EditBookDialog
+                    openEditModal={openEditModal}
+                    setOpenEditModal={setOpenEditModal}
+                  />
+                  <Button
+                    onClick={() => setOpenEditModal(!openEditModal)}
+                    className={"flex flex-row-reverse gap-2 "}
+                  >
                     <Edit2Icon /> Edit
                   </Button>
 

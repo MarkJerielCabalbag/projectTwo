@@ -50,6 +50,7 @@ function AddBookDialog({ openAddModal, setOpenAddModal }) {
               <form>
                 <InputComponent
                   label={"Title"}
+                  type={"text"}
                   placeholder={"Add Book Title"}
                   name="bookTitle"
                   value={bookTitle}
@@ -57,12 +58,14 @@ function AddBookDialog({ openAddModal, setOpenAddModal }) {
                 />
                 <InputComponent
                   label={"Author"}
+                  type={"text"}
                   placeholder={"Add Book Author"}
                   name="bookAuthor"
                   value={bookAuthor}
                   onChange={handleInputChange}
                 />
                 <InputComponent
+                  type={"date"}
                   label={"Publish year"}
                   placeholder={"Add Book Publish Year"}
                   name="bookPublishYear"
@@ -96,18 +99,18 @@ function AddBookDialog({ openAddModal, setOpenAddModal }) {
                       return;
                     }
 
-                    setBook({
-                      bookTitle: "",
-                      bookAuthor: "",
-                      bookPublishYear: "",
-                    });
                     await mutateAsync({
                       bookTitle,
                       bookAuthor,
                       bookPublishYear,
                     });
-                    toast.success(data.message);
-                    setOpenAddModal(!true);
+                    setBook({
+                      bookTitle: "",
+                      bookAuthor: "",
+                      bookPublishYear: "",
+                    });
+
+                    setOpenAddModal(!openAddModal);
                   } catch (err) {
                     setBook({
                       bookTitle: "",
