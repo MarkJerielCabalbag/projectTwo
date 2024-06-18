@@ -12,12 +12,20 @@ import { useGetBooks } from "./api/useApi";
 import toast from "react-hot-toast";
 import DeleteBookAlertDialog from "./component/dialogs/DeleteBookAlertDialog";
 import EditBookDialog from "./component/dialogs/EditBookDialog";
+import InputComponent from "./component/inputs/InputComponent";
 function App() {
   const [openAddModal, setOpenAddModal] = useState(false);
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const [openEditModal, setOpenEditModal] = useState(false);
   const [modalDeleteContent, setDeleteContent] = useState(null);
+  const [modalEditContent, setEditContent] = useState(null);
   const [bookId, setBookId] = useState(null);
+  const [bookData, setBook] = useState({
+    bookTitle: "",
+    bookAuthor: "",
+    bookPublishYear: "",
+  });
+
   const queryClient = useQueryClient();
   const onSuccess = (data) => {
     console.log(data.message);
@@ -36,10 +44,51 @@ function App() {
     console.log(err.message);
     toast.error(err.message);
   };
-  const { data, isError, isFetched, isLoading, isPending } = useGetBooks({
+  const {
+    data: books,
+    isError,
+    isFetched,
+    isLoading,
+    isPending,
+  } = useGetBooks({
     onSuccess,
     onError,
   });
+
+  const handleInputChange = (e) => {
+    setBook({ ...bookData, [e.target.name]: e.target.value });
+    console.log(bookData.bookTitle);
+  };
+
+  const editModalContent = (book) => (
+    <form>
+      <InputComponent
+        label={"Title"}
+        type={"text"}
+        placeholder={"Add Book Title"}
+        name="bookData"
+        value={bookData.bookTitle}
+        onChange={handleInputChange}
+      />
+      <InputComponent
+        label={"Author"}
+        type={"text"}
+        placeholder={"Add Book Author"}
+        name="bookAuthor"
+        value={book.bookAuthor}
+        onChange={handleInputChange}
+      />
+      <InputComponent
+        type={"date"}
+        label={"Publish year"}
+        placeholder={"Add Book Publish Year"}
+        name="bookPublishYear"
+        value={book.bookPublishYear}
+        onChange={handleInputChange}
+      />
+    </form>
+  );
+
   return (
     <div className="container sm:container md:container lg:container">
       <div className="">
@@ -72,7 +121,7 @@ function App() {
         }
         tableBody={
           <>
-            {data?.map((book) => (
+            {books?.map((book) => (
               <TableRow key={book._id}>
                 <TableCell className="font-medium">{book.bookTitle}</TableCell>
                 <TableCell>{book.bookAuthor}</TableCell>
@@ -81,9 +130,16 @@ function App() {
                   <EditBookDialog
                     openEditModal={openEditModal}
                     setOpenEditModal={setOpenEditModal}
+                    editModalContent={modalEditContent}
+                    book={book}
+                    bookId={bookId}
                   />
                   <Button
-                    onClick={() => setOpenEditModal(!openEditModal)}
+                    onClick={() => {
+                      setEditContent(editModalContent(book));
+                      setOpenEditModal(!openEditModal);
+                      setBookId(book._id);
+                    }}
                     className={"flex flex-row-reverse gap-2 "}
                   >
                     <Edit2Icon /> Edit

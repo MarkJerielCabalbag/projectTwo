@@ -54,6 +54,37 @@ async function deleteBook(bookId) {
   }
 }
 
+async function editBook({ id, bookTitle, bookAuthor, bookPublishYear }) {
+  try {
+    const res = await fetch(`http://localhost:8000/api/book/updateBook/${id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ id, bookAuthor, bookTitle, bookPublishYear }),
+    });
+
+    const contentType = res.headers.get("content-type");
+
+    if (!contentType || !contentType.includes("application/json")) {
+      // Handle non-JSON response
+      const text = await res.text();
+      throw new Error(`Unexpected response: ${text}`);
+    }
+
+    const response = await res.json();
+
+    if (!res.ok) {
+      throw new Error(response.message || "An error occurred");
+    }
+
+    return response;
+  } catch (error) {
+    console.error("Error updating the book:", error);
+    throw error;
+  }
+}
+
 export const useCreateBook = ({ onSuccess, onError }) => {
   return useMutation({
     mutationFn: createBook,
@@ -74,6 +105,14 @@ export const useGetBooks = ({ onSuccess, onError }) => {
 export const useDeleteBook = ({ onSuccess, onError }) => {
   return useMutation({
     mutationFn: deleteBook,
+    onSuccess,
+    onError,
+  });
+};
+
+export const useUpdateBook = ({ onSuccess, onError }) => {
+  return useMutation({
+    mutationFn: editBook,
     onSuccess,
     onError,
   });

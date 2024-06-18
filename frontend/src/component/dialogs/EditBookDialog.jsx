@@ -2,8 +2,21 @@ import React from "react";
 import AlertDialogComponent from "../AlertDialogComponent";
 import { Button } from "@/components/ui/button";
 import { Edit3Icon } from "lucide-react";
+import { useUpdateBook } from "@/api/useApi";
+function EditBookDialog({
+  book,
+  editModalContent,
+  openEditModal,
+  setOpenEditModal,
+  bookId,
+}) {
+  const onError = () => console.log("hello");
+  const onSuccess = () => console.log("hi");
+  const { data, mutateAsync } = useUpdateBook({
+    onSuccess,
+    onError,
+  });
 
-function EditBookDialog({ openEditModal, setOpenEditModal }) {
   return (
     <>
       {openEditModal && (
@@ -16,7 +29,7 @@ function EditBookDialog({ openEditModal, setOpenEditModal }) {
               Edit a book a Book
             </div>
           }
-          alertDialogDescription={""}
+          alertDialogDescription={editModalContent}
           alertDialogFooter={
             <div className="flex gap-2 justify-end">
               <Button
@@ -30,7 +43,12 @@ function EditBookDialog({ openEditModal, setOpenEditModal }) {
               <Button
                 onClick={async () => {
                   try {
-                    setOpenEditModal(!openEditModal);
+                    await mutateAsync({
+                      id: bookId,
+                      bookTitle: book.bookTitle,
+                      bookAuthor: book.bookAuthor,
+                      bookPublishYear: book.bookPublishYear,
+                    });
                   } catch (error) {
                     console.log(error);
                   }
