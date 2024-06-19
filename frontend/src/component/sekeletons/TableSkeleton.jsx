@@ -13,29 +13,25 @@ import { Button } from "@/components/ui/button";
 
 function TableSkeleton() {
   return (
-    <Table>
-      <TableBody>
-        <TableRow>
-          <TableCell className="font-medium">
-            <Skeleton className={"w-[100px] h-[20px]"} />
-          </TableCell>
-          <TableCell>
-            <Skeleton className={"w-[100px] h-[20px]"} />
-          </TableCell>
-          <TableCell>
-            <Skeleton className={"w-[240px] h-[20px]"} />
-          </TableCell>
-          <TableCell className="text-right flex gap-2 sm:flex flex-col">
-            <Button variant="ghost">
-              <Skeleton className={"w-[120px] h-[37px] bg-primary"} />
-            </Button>
-            <Button variant="ghost">
-              <Skeleton className={"w-[120px] h-[37px] bg-destructive"} />
-            </Button>
-          </TableCell>
-        </TableRow>
-      </TableBody>
-    </Table>
+    <TableRow>
+      <TableCell className="font-medium">
+        <Skeleton className={"w-[100px] h-[20px]"} />
+      </TableCell>
+      <TableCell>
+        <Skeleton className={"w-[100px] h-[20px]"} />
+      </TableCell>
+      <TableCell>
+        <Skeleton className={"w-[240px] h-[20px]"} />
+      </TableCell>
+      <TableCell className="text-right flex gap-2 sm:flex flex-col">
+        <Button variant="ghost">
+          <Skeleton className={"w-[120px] h-[37px] bg-primary"} />
+        </Button>
+        <Button variant="ghost">
+          <Skeleton className={"w-[120px] h-[37px] bg-destructive"} />
+        </Button>
+      </TableCell>
+    </TableRow>
   );
 }
 

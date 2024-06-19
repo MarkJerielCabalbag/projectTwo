@@ -97,65 +97,59 @@ function App() {
             {books?.map((book) => (
               <>
                 {isFetching || isPending || isLoading ? (
-                  <>
-                    <TableSkeleton />
-                  </>
+                  <TableSkeleton />
                 ) : (
-                  <>
-                    <TableRow key={book._id}>
-                      <TableCell className="font-medium">
-                        {book.bookTitle}
-                      </TableCell>
-                      <TableCell>{book.bookAuthor}</TableCell>
-                      <TableCell>{book.bookPublishYear}</TableCell>
-                      <TableCell className="text-right flex gap-2 sm:flex flex-col">
-                        <EditBookDialog
-                          bookData={bookData}
-                          setBookData={setBookData}
-                          openEditModal={openEditModal}
-                          setOpenEditModal={setOpenEditModal}
-                          editModalContent={
-                            <EditForm
-                              bookData={bookData}
-                              setBookData={setBookData}
-                            />
-                          }
-                        />
-                        <Button
-                          onClick={() => {
-                            setOpenEditModal(true);
-                            setBookId(book._id);
-                            setBookData(book);
-                          }}
-                          className={"flex flex-row-reverse gap-2 "}
-                        >
-                          <Edit2Icon /> Edit
-                        </Button>
+                  <TableRow key={book._id}>
+                    <TableCell className="font-medium">
+                      {book.bookTitle}
+                    </TableCell>
+                    <TableCell>{book.bookAuthor}</TableCell>
+                    <TableCell>{book.bookPublishYear}</TableCell>
+                    <TableCell className="text-right flex gap-2 sm:flex flex-col">
+                      <EditBookDialog
+                        bookData={bookData}
+                        setBookData={setBookData}
+                        openEditModal={openEditModal}
+                        setOpenEditModal={setOpenEditModal}
+                        editModalContent={
+                          <EditForm
+                            bookData={bookData}
+                            setBookData={setBookData}
+                          />
+                        }
+                      />
+                      <Button
+                        onClick={() => {
+                          setOpenEditModal(true);
+                          setBookId(book._id);
+                          setBookData(book);
+                        }}
+                        className={"flex flex-row-reverse gap-2 "}
+                      >
+                        <Edit2Icon /> Edit
+                      </Button>
 
-                        <DeleteBookAlertDialog
-                          bookId={bookId}
-                          openDeleteModal={openDeleteModal}
-                          setOpenDeleteModal={setOpenDeleteModal}
-                          deleteModalContent={modalDeleteContent}
-                        />
+                      <DeleteBookAlertDialog
+                        bookId={bookId}
+                        openDeleteModal={openDeleteModal}
+                        setOpenDeleteModal={setOpenDeleteModal}
+                        deleteModalContent={modalDeleteContent}
+                      />
 
-                        <Button
-                          variant="destructive"
-                          className={"flex flex-row-reverse gap-2"}
-                          onClick={() => {
-                            setDeleteContent(
-                              deleteModalContent(book.bookTitle)
-                            );
-                            setOpenDeleteModal(!openDeleteModal);
-                            setBookId(book._id);
-                          }}
-                        >
-                          <DeleteIcon />
-                          Delete
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                  </>
+                      <Button
+                        variant="destructive"
+                        className={"flex flex-row-reverse gap-2"}
+                        onClick={() => {
+                          setDeleteContent(deleteModalContent(book.bookTitle));
+                          setOpenDeleteModal(!openDeleteModal);
+                          setBookId(book._id);
+                        }}
+                      >
+                        <DeleteIcon />
+                        Delete
+                      </Button>
+                    </TableCell>
+                  </TableRow>
                 )}
               </>
             ))}
