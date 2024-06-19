@@ -1,6 +1,6 @@
 import { AlertDialog, AlertDialogTrigger } from "@radix-ui/react-alert-dialog";
 import AlertDialogComponent from "./component/AlertDialogComponent";
-import { useState, useContext } from "react";
+import { useState } from "react";
 import AddBookDialog from "./component/dialogs/AddBookAlertDialog";
 import { Button } from "./components/ui/button";
 import { Toaster } from "react-hot-toast";
@@ -13,6 +13,7 @@ import toast from "react-hot-toast";
 import DeleteBookAlertDialog from "./component/dialogs/DeleteBookAlertDialog";
 import EditBookDialog from "./component/dialogs/EditBookDialog";
 import InputComponent from "./component/inputs/InputComponent";
+
 function App() {
   const [openAddModal, setOpenAddModal] = useState(false);
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
@@ -20,17 +21,25 @@ function App() {
   const [modalDeleteContent, setDeleteContent] = useState(null);
   const [modalEditContent, setEditContent] = useState(null);
   const [bookId, setBookId] = useState(null);
-  const [bookData, setBook] = useState({
+
+  const [editBook, setEditBook] = useState({
     bookTitle: "",
     bookAuthor: "",
     bookPublishYear: "",
   });
 
   const queryClient = useQueryClient();
+
   const onSuccess = (data) => {
     console.log(data.message);
     toast.success(data.message);
     queryClient.invalidateQueries();
+  };
+
+  const handleInputChangeEdit = (e) => {
+    const { name, value } = e.target;
+    setEditBook({ ...editBook, [name]: value });
+    console.log(editBook);
   };
 
   const deleteModalContent = (bookTitle) => (
@@ -40,10 +49,40 @@ function App() {
     </>
   );
 
+  const editModalContent = () => (
+    <form>
+      <InputComponent
+        label={"New Book Title"}
+        type={"text"}
+        placeholder={"Edit title book"}
+        name="bookTitle"
+        onChange={handleInputChangeEdit}
+        value={editBook.bookTitle}
+      />
+      <InputComponent
+        label={"New Book Author"}
+        type={"text"}
+        placeholder={"Edit author book"}
+        name="bookAuthor"
+        onChange={handleInputChangeEdit}
+        value={editBook.bookAuthor}
+      />
+      <InputComponent
+        label={"New Book Publish Year"}
+        type={"date"}
+        placeholder={"Edit book date"}
+        name="bookPublishYear"
+        onChange={handleInputChangeEdit}
+        value={editBook.bookPublishYear}
+      />
+    </form>
+  );
+
   const onError = (err) => {
     console.log(err.message);
     toast.error(err.message);
   };
+
   const {
     data: books,
     isError,
@@ -54,40 +93,6 @@ function App() {
     onSuccess,
     onError,
   });
-
-  const handleInputChange = (e) => {
-    setBook({ ...bookData, [e.target.name]: e.target.value });
-    console.log(bookData.bookTitle);
-  };
-
-  const editModalContent = (book) => (
-    <form>
-      <InputComponent
-        label={"Title"}
-        type={"text"}
-        placeholder={"Add Book Title"}
-        name="bookData"
-        value={bookData.bookTitle}
-        onChange={handleInputChange}
-      />
-      <InputComponent
-        label={"Author"}
-        type={"text"}
-        placeholder={"Add Book Author"}
-        name="bookAuthor"
-        value={book.bookAuthor}
-        onChange={handleInputChange}
-      />
-      <InputComponent
-        type={"date"}
-        label={"Publish year"}
-        placeholder={"Add Book Publish Year"}
-        name="bookPublishYear"
-        value={book.bookPublishYear}
-        onChange={handleInputChange}
-      />
-    </form>
-  );
 
   return (
     <div className="container sm:container md:container lg:container">
@@ -130,15 +135,19 @@ function App() {
                   <EditBookDialog
                     openEditModal={openEditModal}
                     setOpenEditModal={setOpenEditModal}
-                    editModalContent={modalEditContent}
-                    book={book}
                     bookId={bookId}
+                    editModalContent={modalEditContent}
                   />
                   <Button
                     onClick={() => {
-                      setEditContent(editModalContent(book));
-                      setOpenEditModal(!openEditModal);
+                      setOpenEditModal(true);
                       setBookId(book._id);
+                      setEditContent(editModalContent());
+                      setEditBook({
+                        bookTitle: book.bookTitle,
+                        bookAuthor: book.bookAuthor,
+                        bookPublishYear: book.bookPublishYear,
+                      });
                     }}
                     className={"flex flex-row-reverse gap-2 "}
                   >
