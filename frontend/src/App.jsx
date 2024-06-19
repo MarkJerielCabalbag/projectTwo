@@ -13,6 +13,7 @@ import toast from "react-hot-toast";
 import DeleteBookAlertDialog from "./component/dialogs/DeleteBookAlertDialog";
 import EditBookDialog from "./component/dialogs/EditBookDialog";
 import InputComponent from "./component/inputs/InputComponent";
+import EditForm from "./component/forms/EditForm";
 
 function App() {
   const [openAddModal, setOpenAddModal] = useState(false);
@@ -22,7 +23,7 @@ function App() {
   const [modalEditContent, setEditContent] = useState(null);
   const [bookId, setBookId] = useState(null);
 
-  const [editBook, setEditBook] = useState({
+  const [bookData, setBookData] = useState({
     bookTitle: "",
     bookAuthor: "",
     bookPublishYear: "",
@@ -36,46 +37,11 @@ function App() {
     queryClient.invalidateQueries();
   };
 
-  const handleInputChangeEdit = (e) => {
-    const { name, value } = e.target;
-    setEditBook({ ...editBook, [name]: value });
-    console.log(editBook);
-  };
-
   const deleteModalContent = (bookTitle) => (
     <>
       Do you want to delete the book entitled
       <span className="text-rose-600 text-base text-bold"> {bookTitle}</span>
     </>
-  );
-
-  const editModalContent = () => (
-    <form>
-      <InputComponent
-        label={"New Book Title"}
-        type={"text"}
-        placeholder={"Edit title book"}
-        name="bookTitle"
-        onChange={handleInputChangeEdit}
-        value={editBook.bookTitle}
-      />
-      <InputComponent
-        label={"New Book Author"}
-        type={"text"}
-        placeholder={"Edit author book"}
-        name="bookAuthor"
-        onChange={handleInputChangeEdit}
-        value={editBook.bookAuthor}
-      />
-      <InputComponent
-        label={"New Book Publish Year"}
-        type={"date"}
-        placeholder={"Edit book date"}
-        name="bookPublishYear"
-        onChange={handleInputChangeEdit}
-        value={editBook.bookPublishYear}
-      />
-    </form>
   );
 
   const onError = (err) => {
@@ -133,21 +99,19 @@ function App() {
                 <TableCell>{book.bookPublishYear}</TableCell>
                 <TableCell className="text-right flex gap-2 sm:flex flex-col">
                   <EditBookDialog
+                    bookData={bookData}
+                    setBookData={setBookData}
                     openEditModal={openEditModal}
                     setOpenEditModal={setOpenEditModal}
-                    bookId={bookId}
-                    editModalContent={modalEditContent}
+                    editModalContent={
+                      <EditForm bookData={bookData} setBookData={setBookData} />
+                    }
                   />
                   <Button
                     onClick={() => {
                       setOpenEditModal(true);
                       setBookId(book._id);
-                      setEditContent(editModalContent());
-                      setEditBook({
-                        bookTitle: book.bookTitle,
-                        bookAuthor: book.bookAuthor,
-                        bookPublishYear: book.bookPublishYear,
-                      });
+                      setBookData(book);
                     }}
                     className={"flex flex-row-reverse gap-2 "}
                   >

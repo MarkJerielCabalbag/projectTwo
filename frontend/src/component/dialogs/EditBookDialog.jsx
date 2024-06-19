@@ -7,12 +7,14 @@ import InputComponent from "../inputs/InputComponent";
 import { useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
+import EditForm from "../forms/EditForm";
 function EditBookDialog({
-  editModalContent,
+  bookData,
   bookId,
   openEditModal,
   setOpenEditModal,
-  book,
+  setBookData,
+  editModalContent,
 }) {
   const queryClient = useQueryClient();
   const onError = (err) => {
@@ -52,37 +54,7 @@ function EditBookDialog({
               Edit a book a Book
             </div>
           }
-          alertDialogDescription={
-            <>
-              {/* <form>
-                <InputComponent
-                  label={"New Book Title"}
-                  type={"text"}
-                  placeholder={"Edit title book"}
-                  name="bookTitle"
-                  onChange={handleInputChangeEdit}
-                  value={editBook.bookTitle}
-                />
-                <InputComponent
-                  label={"New Book Author"}
-                  type={"text"}
-                  placeholder={"Edit author book"}
-                  name="bookAuthor"
-                  onChange={handleInputChangeEdit}
-                  value={editBook.bookAuthor}
-                />
-                <InputComponent
-                  label={"New Book Publish Year"}
-                  type={"date"}
-                  placeholder={"Edit book date"}
-                  name="bookPublishYear"
-                  onChange={handleInputChangeEdit}
-                  value={editBook.bookPublishYear}
-                />
-              </form> */}
-              {editModalContent}
-            </>
-          }
+          alertDialogDescription={<>{editModalContent}</>}
           alertDialogFooter={
             <div className="flex gap-2 justify-end">
               <Button
@@ -97,10 +69,10 @@ function EditBookDialog({
                 onClick={async () => {
                   try {
                     await mutateAsync({
-                      id: bookId,
-                      bookTitle: editBook.bookTitle,
-                      bookAuthor: editBook.bookAuthor,
-                      bookPublishYear: editBook.bookPublishYear,
+                      id: bookData._id,
+                      bookTitle: bookData.bookTitle,
+                      bookAuthor: bookData.bookAuthor,
+                      bookPublishYear: bookData.bookPublishYear,
                     });
                     setOpenEditModal(!openEditModal);
                   } catch (error) {
