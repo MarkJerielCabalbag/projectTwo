@@ -6,6 +6,7 @@ import { useCreateBook } from "@/api/useApi";
 import { useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import { LoaderCircle } from "lucide-react";
+import AddBookForm from "../forms/AddBookForm";
 function AddBookDialog({ openAddModal, setOpenAddModal }) {
   const [book, setBook] = useState({
     bookTitle: "",
@@ -16,23 +17,17 @@ function AddBookDialog({ openAddModal, setOpenAddModal }) {
   const onSuccess = (data) => {
     console.log("Added a new book");
     toast.success(data.message);
-    queryClient.invalidateQueries();
   };
   const onError = (err) => {
     console.log(err.message);
     toast.error(err.message);
   };
-  const { bookTitle, bookAuthor, bookPublishYear } = book;
+
   const { mutateAsync, isError, isPending, isSuccess, isLoading, error, data } =
     useCreateBook({
       onSuccess,
       onError,
     });
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setBook({ ...book, [name]: value });
-    console.log(book);
-  };
 
   useEffect(() => {
     if (isError) toast.error(error.message);
@@ -47,32 +42,7 @@ function AddBookDialog({ openAddModal, setOpenAddModal }) {
           onOpenChange={setOpenAddModal}
           alertDialogDescription={
             <>
-              <form>
-                <InputComponent
-                  label={"Title"}
-                  type={"text"}
-                  placeholder={"Add Book Title"}
-                  name="bookTitle"
-                  value={bookTitle}
-                  onChange={handleInputChange}
-                />
-                <InputComponent
-                  label={"Author"}
-                  type={"text"}
-                  placeholder={"Add Book Author"}
-                  name="bookAuthor"
-                  value={bookAuthor}
-                  onChange={handleInputChange}
-                />
-                <InputComponent
-                  type={"date"}
-                  label={"Publish year"}
-                  placeholder={"Add Book Publish Year"}
-                  name="bookPublishYear"
-                  value={bookPublishYear}
-                  onChange={handleInputChange}
-                />
-              </form>
+              <AddBookForm book={book} setBook={setBook} />
             </>
           }
           alertDialogFooter={
@@ -100,15 +70,16 @@ function AddBookDialog({ openAddModal, setOpenAddModal }) {
                     }
 
                     await mutateAsync({
-                      bookTitle,
-                      bookAuthor,
-                      bookPublishYear,
+                      bookTitle: book.bookTitle,
+                      bookAuthor: book.bookAuthor,
+                      bookPublishYear: book.bookPublishYear,
                     });
                     setBook({
                       bookTitle: "",
                       bookAuthor: "",
                       bookPublishYear: "",
                     });
+                    queryClient.invalidateQueries();
 
                     setOpenAddModal(!openAddModal);
                   } catch (err) {
